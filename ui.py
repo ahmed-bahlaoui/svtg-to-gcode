@@ -5,6 +5,7 @@ from logic import convert_svg_to_gcode
 from preview import show_gcode_preview
 import os
 
+
 class GCodeApp:
     def __init__(self, master):
         self.master = master
@@ -22,12 +23,16 @@ class GCodeApp:
         self.frame.grid_columnconfigure(1, weight=1)  # Allow entry fields to stretch
 
         # --- SVG File Row ---
-        ctk.CTkLabel(self.frame, text="SVG File:").grid(row=0, column=0, sticky="e", padx=10, pady=10)
+        ctk.CTkLabel(self.frame, text="SVG File:").grid(
+            row=0, column=0, sticky="e", padx=10, pady=10
+        )
 
         self.svg_entry = ctk.CTkEntry(self.frame, textvariable=self.svg_path_var)
         self.svg_entry.grid(row=0, column=1, sticky="ew", padx=(0, 10))
 
-        ctk.CTkButton(self.frame, text="Browse", command=self.browse_file).grid(row=0, column=2, padx=10)
+        ctk.CTkButton(self.frame, text="Browse", command=self.browse_file).grid(
+            row=0, column=2, padx=10
+        )
 
         # --- Parameters ---
         self._add_param("Movement Speed:", 1, "3000")
@@ -40,18 +45,16 @@ class GCodeApp:
 
         # Convert and Save Button
         self.convert_btn = ctk.CTkButton(
-            button_frame, 
-            text="Convert and Save", 
-            command=self.generate_and_save_gcode
+            button_frame, text="Convert and Save", command=self.generate_and_save_gcode
         )
         self.convert_btn.pack(side="left", padx=5)
 
         # Preview Button
         self.preview_btn = ctk.CTkButton(
-            button_frame, 
-            text="Preview", 
+            button_frame,
+            text="Preview",
             command=self.preview_gcode,
-            state="disabled"  # Initially disabled
+            state="disabled",  # Initially disabled
         )
         self.preview_btn.pack(side="left", padx=5)
 
@@ -59,7 +62,9 @@ class GCodeApp:
         master.bind("<Configure>", self.on_resize)
 
     def _add_param(self, label, row, default_value):
-        ctk.CTkLabel(self.frame, text=label).grid(row=row, column=0, sticky="e", padx=10, pady=5)
+        ctk.CTkLabel(self.frame, text=label).grid(
+            row=row, column=0, sticky="e", padx=10, pady=5
+        )
         entry = ctk.CTkEntry(self.frame)
         entry.insert(0, default_value)
         entry.grid(row=row, column=1, sticky="ew", padx=(0, 10))
@@ -78,10 +83,7 @@ class GCodeApp:
             pass_depth = float(self.param_3.get())
 
             self.current_gcode = convert_svg_to_gcode(
-                svg_path, 
-                movement_speed, 
-                cutting_speed, 
-                pass_depth
+                svg_path, movement_speed, cutting_speed, pass_depth
             )
             return True
         except Exception as e:
@@ -97,7 +99,8 @@ class GCodeApp:
         file_path = filedialog.asksaveasfilename(
             defaultextension=".gcode",
             filetypes=[("G-code files", "*.gcode")],
-            initialfile=os.path.splitext(os.path.basename(self.svg_path_var.get()))[0] + ".gcode"
+            initialfile=os.path.splitext(os.path.basename(self.svg_path_var.get()))[0]
+            + ".gcode",
         )
         if file_path and self.current_gcode:
             with open(file_path, "w") as f:
@@ -108,7 +111,9 @@ class GCodeApp:
         if self.current_gcode:
             show_gcode_preview(self.current_gcode)
         else:
-            messagebox.showwarning("Warning", "No G-code generated yet. Please convert first.")
+            messagebox.showwarning(
+                "Warning", "No G-code generated yet. Please convert first."
+            )
 
     def on_resize(self, event):
         max_width = 600

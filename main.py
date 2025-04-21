@@ -1,7 +1,8 @@
 import customtkinter as ctk
 import random
 from ui import GCodeApp
-COLORS = ['blue', 'dark-blue', 'green']
+
+COLORS = ["blue", "dark-blue", "green"]
 COLOR_THEME = COLORS[1]
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 
+
 def show_gcode_preview(gcode_text):
     preview_win = ctk.CTkToplevel()
     preview_win.title("G-code Preview")
@@ -21,8 +22,7 @@ def show_gcode_preview(gcode_text):
     # Add save button
     def save_gcode():
         file_path = filedialog.asksaveasfilename(
-            defaultextension=".gcode",
-            filetypes=[("G-code files", "*.gcode")]
+            defaultextension=".gcode", filetypes=[("G-code files", "*.gcode")]
         )
         if file_path:
             try:
@@ -32,9 +32,5 @@ def show_gcode_preview(gcode_text):
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to save file: {str(e)}")
 
-    save_button = ctk.CTkButton(
-        main_frame, 
-        text="Save G-code", 
-        command=save_gcode
-    )
+    save_button = ctk.CTkButton(main_frame, text="Save G-code", command=save_gcode)
     save_button.pack(pady=(0, 5))
