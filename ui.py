@@ -54,7 +54,7 @@ class GCodeApp:
             button_frame,
             text="Preview",
             command=self.preview_gcode,
-            state="disabled",  # Initially disabled
+            state="normal",
         )
         self.preview_btn.pack(side="left", padx=5)
 
@@ -108,17 +108,45 @@ class GCodeApp:
             messagebox.showinfo("Success", "G-code file saved successfully!")
 
     def preview_gcode(self):
-        if self.current_gcode:
-            show_gcode_preview(self.current_gcode)
-        else:
-            messagebox.showwarning(
-                "Warning", "No G-code generated yet. Please convert first."
-            )
+        try:
+            # Get the SVG path
+            svg_path = self.svg_path_var.get()
+            if not svg_path:
+                messagebox.showerror("Error", "Please select an SVG file first")
+                return
+
+            # Get parameters
+            movement_speed = self.param_1.get()
+            cutting_speed = self.param_2.get()
+            pass_depth = self.param_3.get()
+
+            # Generate G-code without saving
+            try:
+                gcode = convert_svg_to_gcode(
+                    svg_path,
+                    movement_speed=float(movement_speed),
+                    cutting_speed=float(cutting_speed),
+                    pass_depth=float(pass_depth),
+                )
+                # Store the generated gcode
+                self.current_gcode = gcode
+                # Show preview
+                show_gcode_preview(gcode)
+            except ValueError as e:
+                messagebox.showerror(
+                    "Error", "Please enter valid numbers for speeds and depth"
+                )
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to generate preview: {str(e)}")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Preview failed: {str(e)}")
 
     def on_resize(self, event):
-        max_width = 600
-        current_width = event.width
-        if current_width > max_width:
-            self.svg_entry.configure(width=max_width - 200)
-        else:
-            self.svg_entry.configure(width=1)
+        """Handle window resize events"""
+        # Minimum width to prevent UI elements from overlapping
+        min_width = 500
+        # If window gets too small, enforce minimum size
+        if event.widget == self.master:  # Only respond to main window resizes
+            if event.width < min_width:
+                self.master.geometry(f"{min_width}x{event.height}")
